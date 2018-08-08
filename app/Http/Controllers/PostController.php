@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Post;
 use Auth;
+use App\User;
 use App\Http\Requests\PostRequest;
+use App\Follow;
 
 class PostController extends Controller
 {
@@ -16,10 +18,19 @@ class PostController extends Controller
      */
     public function index()
     {
-        //$posts = Post::where('userID', Auth::user()->id)->get();
-        $posts = Post::where('userID', Auth::user()->id)->orderBy('created_at', 'desc')->paginate(10);
-        $posts = auth()->user()->posts();
-        return view('posts.index')->with(compact('posts'));
+        $posts = Auth::user()->posts()->orderBy('created_at','desc')->paginate(10);
+        $userDetails = Auth::user();
+        return view('posts.index')->with(compact(['posts', 'userDetails']));
+    }
+
+    public function showProfile($id){
+       
+        //$posts = User::find($id)->posts->orderBy('created_at','desc')->paginate(10);
+        $posts = User::find($id)->posts()->orderBy('created_at','desc')->paginate(10);
+        $userDetails = User::find($id);
+        $follow = new Follow();
+        $isFollowing = $follow->follow_check($id);
+        return view('posts.index', compact('id', 'posts', 'userDetails', 'isFollowing'));
     }
 
     /**
@@ -104,5 +115,18 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function timeline(){
+        $posts = Post::whereHas('user', function($query){
+            $query->where('id', 1);
+        })->orWhereHas('user', function($query){
+            $query->whereHas('followers', function($query){
+                $query->where('follower_id', 1);
+            });
+        })->orderBy('created_at', 'desc')->paginate(10);
+        
+        
+        return view('posts.timeline', compact('posts'));
     }
 }

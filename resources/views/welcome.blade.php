@@ -88,8 +88,11 @@
                             <a href="{{ route('login') }}">Login</a>
                         <a href="{{ route('register') }}">Register</a>
                         @else
-                        <a href="/posts">My Posts</a>
+                        <a href="/timeline">Timeline</a>
+                        <a href="/posts">My Profile</a>
                         <a href="/posts/create">Create Post</a>
+                        <a href="/users">Lists of Users</a>
+                        <a href="/listOfFollowing">Lists of Following</a>
                         @endif
                     {{--  <a href="https://laravel-news.com">News</a>
                     <a href="https://forge.laravel.com">Forge</a>

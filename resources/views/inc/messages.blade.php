@@ -1,4 +1,5 @@
 @if(count($errors))
+    @if(!$errors->get('email'))
     <div class="alert alert-danger">
         <strong>Whoops! There were some problems with your input:</strong><br>
         @foreach($errors->all() as $error)
@@ -6,6 +7,7 @@
         
         @endforeach
     </div>
+    @endif
 @endif
 
 @if(session('error'))

@@ -29,18 +29,5 @@ class PostRequest extends FormRequest
         ];
     }
 
-    public function attributes()
-    {
-        return [
-            'title' => 'walaa',
-            'body' => 'divan',
-        ];
-    }
-
-    public function messages()
-    {
-        return[
-            'required' => ':attribute test message',
-        ];
-    }
+    
 }
