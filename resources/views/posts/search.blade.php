@@ -30,7 +30,10 @@
 </form>
 
 <hr>
-@include('posts.displayPosts')
+@if(isset($posts))
+
+    @include('posts.displayPosts')
+@endif
 
 @endsection
 
