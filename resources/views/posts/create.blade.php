@@ -1,14 +1,10 @@
 @extends('layouts.app')
-<head>
-    <title>Create Post</title>
-</head>
+@section('title', 'Create Post')
 @section('content')
 <h1>Create Post</h1>
 <hr>
-
     <form action="{{ route('posts.store') }}" method="POST" >
         @csrf()
-        {{--  <form action="" method="POST" >  --}}
         <div class="form-group">
             <div class="col-md">
                 <label for="Title">Title</label>
@@ -21,8 +17,31 @@
                 <textarea class="form-control" id="body" name="body" rows="5"></textarea>
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-md">
+                <label for="hashtags">Select Hashtag</label>
+                <select name="hashtag_id[]" id="hastags" class="form-control" multiple="multiple">
+                    @if($hashtags)
+                        @foreach($hashtags as $hashtag)
+                            <option value="{{$hashtag->id}}">{{$hashtag->name}}</option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
+        </div>
         <div class="col-md-7">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
     </form>
 @endsection
+
+
+@push('javascript')
+<script type="text/javascript">
+        $(document).ready(function(){
+            $('#hastags').select2({
+                tags: true,
+            });
+        });
+    </script>
+@endpush

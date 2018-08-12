@@ -8,6 +8,7 @@ use Auth;
 use App\User;
 use App\Http\Requests\PostRequest;
 use App\Follow;
+use App\Tag;
 
 class PostController extends Controller
 {
@@ -20,7 +21,7 @@ class PostController extends Controller
     {
         $posts = Auth::user()->posts()->orderBy('created_at','desc')->paginate(10);
         $userDetails = Auth::user();
-        return view('posts.index')->with(compact(['posts', 'userDetails']));
+        return view('posts.index')->with(compact(['posts', 'userDetails', 'tags']));
     }
 
     public function showProfile($id){
@@ -40,7 +41,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create');
+        $tag = new Tag();
+        $hashtags = $tag->getAll();
+        return view('posts.create', compact('hashtags'));
     }
 
     /**
@@ -58,15 +61,27 @@ class PostController extends Controller
         //     'title' => 'required',
         //     'body' => 'required',
         // ]);
+        
         //creates a new post object
         $post = new Post();
         //gets the values from the request object and assigns them to the post variables
         $post->title = $request->input('title');
         $post->body = $request->input('body');
-        $post->userID = Auth::user()->id;
-        //call the save method 
-        $post->save();
-
+        //$post->userID = Auth::user()->id;
+        $user = Auth::user();
+        //inserting a post with user associated to it
+        $user->posts()->save($post);
+        //if we have an array of IDs we can pass them
+        $tag = new Tag();
+        $tag_id = array();
+        foreach($request->input('hashtag_id') as $hashtag){
+            if(is_numeric($hashtag) == FALSE){
+                $tag_id[] = $tag->saveTag($hashtag);
+            } else{
+                $tag_id[] = $hashtag;
+            }
+        }
+        $post->tags()->sync($tag_id);
         return redirect('/posts')->with('success', 'Your post has been created successfully!');
     }
 
@@ -119,10 +134,10 @@ class PostController extends Controller
 
     public function timeline(){
         $posts = Post::whereHas('user', function($query){
-            $query->where('id', 1);
+            $query->where('id', Auth::user()->id);
         })->orWhereHas('user', function($query){
             $query->whereHas('followers', function($query){
-                $query->where('follower_id', 1);
+                $query->where('follower_id', Auth::user()->id);
             });
         })->orderBy('created_at', 'desc')->paginate(10);
         

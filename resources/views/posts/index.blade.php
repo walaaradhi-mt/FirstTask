@@ -1,7 +1,6 @@
 @extends('layouts.app')
-<head>
-    <title>My Profile</title>
-</head>
+@section('title', 'My Profile')
+
 @section('content')
 <div style="text-align:center">
         <img src="https://cdn.onlinewebfonts.com/svg/img_191958.png" width="100px">
@@ -40,12 +39,21 @@
 @if(count($posts))
     @foreach($posts as $post)
         <div class="well">
-            <h3><a href="/posts/{{$post->id}}">{{$post->title}}</a></h3>
+            <h3>{{$post->title}}</h3>
             <small>Written on: {{$post->created_at}}</small>
-            <h5>{{ str_limit(strip_tags($post->body), 150) }}</h5>
+            <h5>{{str_limit(strip_tags($post->body), 150) }}</h5>
             @if (strlen(strip_tags($post->body)) > 150)
               <a href="/posts/{{$post->id}}">Read More</a>
             @endif
+            @if(count($post->tags()))
+                <br>
+                <small>
+                @foreach($post->tags as $tag)
+                    <a href ="/tag/{{$tag->id}}">{{'#'.$tag->name.' '}}</a>
+                @endforeach
+                </small>
+            @endif
+                
             <hr>
         </div>
     @endforeach

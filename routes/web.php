@@ -1,6 +1,7 @@
 <?php
 use App\User;
 use App\Follow;
+use App\Tag;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,6 +40,8 @@ Route::get('/listOfFollowing', 'UserController@listOfFollowing');
 
 Route::get('/timeline', 'PostController@timeline');
 
+Route::resource('/tag', 'TagController');
+
 Route::get('/test', function(){
 
     // dd(Follow::find(1)->user_following);
@@ -50,16 +53,23 @@ Route::get('/test', function(){
     // }
     // $posts = User::find(1)->following()->posts;
 
-    $posts = App\Post::whereHas('user', function($query){
-                $query->where('id', 1);
-            })->orWhereHas('user', function($query){
-                $query->whereHas('followers', function($query){
-                    $query->where('follower_id', 1);
-                });
-            })->get();
-    $posts = User::find(1)->postsByFollowing()->orderBy('created_at', 'desc')->get();
-    dd($posts);
-    foreach($posts as $post){
-        echo $post->id;
-    }
+    // $posts = App\Post::whereHas('user', function($query){
+    //             $query->where('id', 1);
+    //         })->orWhereHas('user', function($query){
+    //             $query->whereHas('followers', function($query){
+    //                 $query->where('follower_id', 1);
+    //             });
+    //         })->get();
+    // $posts = User::find(1)->postsByFollowing()->orderBy('created_at', 'desc')->get();
+    // dd($posts);
+    // foreach($posts as $post){
+    //     echo $post->id;
+    // }
+
+    // $tag = new Tag();
+    // return $tag->getAll();
+
+    return view('posts.search');
 });
+
+Route::post('/search', 'TagController@displayPosts')->name('tags.search');

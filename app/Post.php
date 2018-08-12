@@ -10,4 +10,8 @@ class Post extends Model
     {
         return $this->belongsTo(User::class, "userID");
     }
+
+    public function tags(){
+        return $this->belongsToMany('App\Tag');
+    }
 }

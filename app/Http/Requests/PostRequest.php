@@ -26,6 +26,13 @@ class PostRequest extends FormRequest
         return [
             'title' => 'required',
             'body' => 'required',
+            'hashtag_id' => 'required',
+        ];
+    }
+
+    public function attributes(){
+        return [
+            'hashtag_id' => 'Hashtags'
         ];
     }
 
